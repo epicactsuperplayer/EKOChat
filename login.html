@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EKOChat - Login</title>
+  <style>
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-tertiary: #2d2d2d;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #4CAF50;
+      --accent-hover: #3e8e41;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: var(--bg-secondary);
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      width: 400px;
+      text-align: center;
+    }
+    h1 {
+      color: var(--accent);
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      display: inline-block;
+      width: 100%;
+    }
+    input {
+      width: calc(100% - 20px);
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid var(--bg-tertiary);
+      border-radius: 5px;
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    button {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    button:hover { background-color: var(--accent-hover); }
+    .divider {
+      color: var(--text-secondary);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><span style="color: white;">EKO</span>Chat v0.03.1</h1>
+    <form action="/login" method="post" autocomplete="on">
+      <input type="email" name="email" placeholder="Email (Gmail/Outlook only)" required autocomplete="email">
+      <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
+      <button type="submit">Login</button>
+    </form>
+    <div class="divider">OR</div>
+    <a href="signup.html"><button>Go to Sign Up</button></a>
+  </div>
+</body>
+</html>

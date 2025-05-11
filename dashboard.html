@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EKOChat Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent: #4CAF50;
+            --accent-hover: #3e8e41;
+            --accent-light: #8BC34A;
+            --danger: #f04747;
+            --success: #43b581;
+            --white: #ffffff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; 
+            height: 100vh; 
+            margin: 0; 
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        nav { 
+            width: 250px; 
+            background: var(--bg-secondary); 
+            padding: 20px; 
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .logo {
+            color: var(--white);
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 15px;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: var(--white);
+        }
+        
+        .username {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        main { 
+            flex: 1; 
+            padding: 25px; 
+            overflow-y: auto; 
+            background-color: var(--bg-primary);
+        }
+        
+        .version { 
+            margin-top: auto;
+            color: var(--text-secondary); 
+            font-size: 12px; 
+            padding-top: 20px;
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+        }
+        
+        nav a { 
+            display: flex;
+            align-items: center;
+            margin: 5px 0; 
+            padding: 10px;
+            text-decoration: none; 
+            color: var(--text-primary); 
+            cursor: pointer; 
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        nav a:hover { 
+            background-color: var(--accent);
+            color: var(--white);
+        }
+        
+        nav a.active {
+            background-color: var(--accent);
+            color: var(--white);
+        }
+        
+        .icon {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        textarea, input { 
+            width: 100%; 
+            margin: 10px 0; 
+            padding: 12px; 
+            border-radius: 5px;
+            border: 1px solid var(--bg-tertiary);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+        }
+        
+        .chat-box { 
+            flex: 1;
+            border: 1px solid var(--bg-tertiary); 
+            padding: 15px; 
+            margin-bottom: 15px;
+            overflow-y: auto; 
+            background: var(--bg-secondary); 
+            border-radius: 5px;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-area input {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .msg { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 5px;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-msg {
+            background-color: var(--bg-tertiary);
+            margin-left: 20px;
+            border-radius: 15px 15px 0 15px;
+            border-left: 3px solid var(--white);
+        }
+        
+        .ai-msg {
+            background-color: var(--accent);
+            color: var(--white);
+            margin-right: 20px;
+            border-radius: 15px 15px 15px 0;
+        }
+        
+        .sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .tool-card {
+            background-color: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .tool-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--accent);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1, h2 {
+            margin-bottom: 20px;
+            color: var(--white);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        
+        select {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--bg-tertiary);
+            width: 100%;
+            margin: 5px 0 15px 0;
+        }
+        
+        .settings-row {
+            margin-bottom: 20px;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            padding: 10px;
+            margin-right: 20px;
+            border-radius: 15px 15px 15px 0;
+            background-color: var(--accent);
+            width: fit-content;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: typing 1s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 100% { opacity: 0.6; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-5px); }
+        }
+        
+        .welcome-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .welcome-card {
+            background-color: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+            cursor: pointer;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .welcome-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        .badge {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+    </style>
+    <script>
+        let username = "NightOwl"; // Default username - can be changed
+        let userInitial = username.charAt(0);
+        
+        // List of AI responses for a more realistic conversation
+        const aiResponses = [
+            "I'm here to help! What can I assist you with today?",
+            "That's an interesting question. Let me think about that...",
+            "Based on my analysis, I would recommend approaching this from a different angle.",
+            "I found several solutions to your problem. The most efficient one would be...",
+            "I don't have enough information to answer that properly. Could you provide more details?",
+            "That's outside my expertise, but I can suggest some resources that might help.",
+            "I've analyzed your request and have a few options to present.",
+            "Let me search my knowledge base for the most up-to-date information on that topic.",
+            "I think we should break this down into smaller steps to tackle efficiently."
+        ];
+        
+        // Loading content based on selected section
+        function loadContent(section) {
+            // Remove active class from all links
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            
+            // Add active class to clicked link
+            document.querySelector(nav a[data-section="${section}"]).classList.add('active');
+            
+            const content = {
+                'ai': <h2>AI Chat</h2>
+                    <div class="chat-container">
+                        <div class="chat-box" id="ai-chat-box">
+                            <div class="msg ai-msg">
+                                <div class="sender">EKOChat AI</div>
+                                Hello ${username}! I'm your personal AI assistant. How can I help you today?
+                            </div>
+                        </div>
+                        <div class="input-area">
+                            <input type="text" id="ai-input" placeholder="Ask the AI anything..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+                            <button onclick="sendAIMessage()">Send</button>
+                        </div>
+                    </div>,
+                    
+                'private': <h2>Private Chat</h2>
+                    <div class="chat-container">
+                        <div class="chat-box" id="private-chat-box">
+                            <div class="msg ai-msg">
+                                <div class="sender">System</div>
+                                Welcome to your private chat. Your messages are end-to-end encrypted.
+                            </div>
+                        </div>
+                        <div class="input-area">
+                            <input type="text" id="private-input" placeholder="Send a private message..." onkeydown="if(event.key==='Enter') sendPrivateMessage()">
+                            <button onclick="sendPrivateMessage()">Send</button>
+                        </div>
+                    </div>,
+                    
+                'international': <h2>International Chat</h2>
+                    <div class="chat-container">
+                        <div class="chat-box" id="intl-chat-box">
+                            <div class="msg ai-msg">
+                                <div class="sender">System</div>
+                                Welcome to the international chat room. Connect with people from around the world!
+                            </div>
+                        </div>
+                        <div class="input-area">
+                            <input type="text" id="intl-input" placeholder="Say something to the world..." onkeydown="if(event.key==='Enter') sendIntlMessage()">
+                            <button onclick="sendIntlMessage()">Send</button>
+                        </div>
+                    </div>,
+                    
+                'notes': <h2>Notes</h2>
+                    <textarea rows="15" placeholder="Write your notes here..." id="notes-area"></textarea>
+                    <div>
+                        <button onclick="saveNotes()">Save Notes</button>
+                        <button onclick="clearNotes()" style="background-color: var(--danger);">Clear</button>
+                    </div>,
+                    
+                'tools': <h2>Moderator Tools</h2>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-icon">👤</div>
+                            <div class="card-title">User Management</div>
+                            <button>Manage Users</button>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon">🚫</div>
+                            <div class="card-title">Content Moderation</div>
+                            <button>Review Content</button>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon">📊</div>
+                            <div class="card-title">Analytics</div>
+                            <button>View Reports</button>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon">⚙️</div>
+                            <div class="card-title">Bot Settings</div>
+                            <button>Configure</button>
+                        </div>
+                    </div>,
+                    
+                'settings': <h2>Settings</h2>
+                    <div class="settings-row">
+                        <label>Username:</label>
+                        <input type="text" id="username-input" value="${username}" onchange="updateUsername()">
+                    </div>
+                    <div class="settings-row">
+                        <label>Theme:</label>
+                        <select id="theme-select">
+                            <option value="dark-green">Dark Green (Default)</option>
+                            <option value="light-green">Light Green</option>
+                            <option value="dark-blue">Dark Blue</option>
+                        </select>
+                    </div>
+                    <div class="settings-row">
+                        <label>Avatar:</label>
+                        <input type="file" id="avatar-upload">
+                    </div>
+                    <div class="settings-row">
+                        <label>Choose from Gallery:</label>
+                        <select>
+                            <option>Default Avatar</option>
+                            <option>Avatar 1</option>
+                            <option>Avatar 2</option>
+                            <option>Avatar 3</option>
+                        </select>
+                    </div>
+                    <button>Save Settings</button>
+            };
+            
+            document.getElementById('main').innerHTML = content[section];
+        }
+        
+        function updateUsername() {
+            username = document.getElementById('username-input').value;
+            userInitial = username.charAt(0);
+            document.getElementById('user-initial').innerText = userInitial;
+            document.getElementById('username-display').innerText = username;
+        }
+        
+        function sendAIMessage() {
+            const input = document.getElementById('ai-input');
+            const box = document.getElementById('ai-chat-box');
+            const msg = input.value;
+            if (!msg) return;
+            
+            // Add user message
+            box.innerHTML += <div class="msg user-msg">
+                <div class="sender">${username}</div>
+                ${msg}
+            </div>;
+            
+            // Show typing indicator
+            const typingId = 'typing-' + Date.now();
+            box.innerHTML += <div class="typing-indicator" id="${typingId}">
+                <span></span><span></span><span></span>
+            </div>;
+            
+            // Scroll to bottom
+            box.scrollTop = box.scrollHeight;
+            
+            // Clear input
+            input.value = "";
+            
+            // Simulate AI response after a delay
+            setTimeout(() => {
+                // Remove typing indicator
+                document.getElementById(typingId).remove();
+                
+                // Get random response from list
+                const randomIndex = Math.floor(Math.random() * aiResponses.length);
+                const aiResponse = aiResponses[randomIndex];
+                
+                // Add AI response
+                box.innerHTML += <div class="msg ai-msg">
+                    <div class="sender">SuperChat AI</div>
+                    ${aiResponse}
+                </div>;
+                
+                // Scroll to bottom again
+                box.scrollTop = box.scrollHeight;
+            }, 1500);
+        }
+        
+        function sendPrivateMessage() {
+            const input = document.getElementById('private-input');
+            const box = document.getElementById('private-chat-box');
+            const msg = input.value;
+            if (!msg) return;
+            
+            box.innerHTML += <div class="msg user-msg">
+                <div class="sender">${username}</div>
+                ${msg}
+            </div>;
+            
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+        }
+        
+        function sendIntlMessage() {
+            const input = document.getElementById('intl-input');
+            const box = document.getElementById('intl-chat-box');
+            const msg = input.value;
+            if (!msg) return;
+            
+            box.innerHTML += <div class="msg user-msg">
+                <div class="sender">${username} 🇺🇸</div>
+                ${msg}
+            </div>;
+            
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+        }
+        
+        function saveNotes() {
+            alert("Notes saved successfully!");
+        }
+        
+        function clearNotes() {
+            document.getElementById('notes-area').value = "";
+        }
+        
+        // Initialize with some content when page loads
+        window.onload = function() {
+            // Set user initial
+            userInitial = username.charAt(0);
+            document.getElementById('user-initial').innerText = userInitial;
+            document.getElementById('username-display').innerText = username;
+            
+            // Load welcome page
+            document.getElementById('main').innerHTML = 
+                <h1>EKOChat Dashboard</h1>
+                <p>Welcome to EKOChat, ${username}! Please select a feature from the sidebar.</p>
+                
+                <div class="welcome-grid">
+                    <div class="welcome-card" onclick="loadContent('ai')">
+                        <div class="card-title">AI Chat</div>
+                        <p>Chat with our advanced AI assistant</p>
+                    </div>
+                    <div class="welcome-card" onclick="loadContent('private')">
+                        <div class="card-title">Private Chat</div>
+                        <p>Secure, encrypted messaging</p>
+                    </div>
+                    <div class="welcome-card" onclick="loadContent('international')">
+                        <div class="card-title">International</div>
+                        <p>Connect with people worldwide</p>
+                    </div>
+                    <div class="welcome-card" onclick="loadContent('notes')">
+                        <div class="card-title">Notes</div>
+                        <p>Keep track of your ideas</p>
+                    </div>
+                </div>
+            ;
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="logo">EKO<span>Chat</span></div>
+        <div class="user-section">
+            <div class="avatar" id="user-avatar">
+                <span id="user-initial">N</span>
+            </div>
+            <div>
+                <div class="username" id="username-display">NightOwl</div>
+                <div style="font-size: 0.8em; color: var(--accent);">Online</div>
+            </div>
+        </div>
+        
+        <a onclick="loadContent('ai')" data-section="ai">
+            <div class="icon">🤖</div> AI Chat
+        </a>
+        <a onclick="loadContent('private')" data-section="private">
+            <div class="icon">💬</div> Private Chat
+        </a>
+        <a onclick="loadContent('international')" data-section="international">
+            <div class="icon">🌎</div> International Chat
+        </a>
+        <a onclick="loadContent('notes')" data-section="notes">
+            <div class="icon">📝</div> Notes
+        </a>
+        <a onclick="loadContent('tools')" data-section="tools">
+            <div class="icon">🛠️</div> Moderator Tools
+        </a>
+        <a onclick="loadContent('settings')" data-section="settings">
+            <div class="icon">⚙️</div> Settings
+        </a>
+        <a href="#" style="margin-top: 20px; color: var(--danger);">
+            <div class="icon">🚪</div> Logout
+        </a>
+        
+        <div class="version">v0.03.1</div>
+    </nav>
+    <main id="main">
+        <!-- Content will be loaded here by JavaScript -->
+    </main>
+</body>
+</html>
